@@ -8,6 +8,29 @@
 
 #import "XMLParser.h"
 
+static bool is_node_str_match(XMLNode *node, NSString *str)
+{
+    if (![str hasSuffix:@"]"])
+    {
+        return [str isEqualToString:node.name];
+    }else
+    {
+        NSRange range = [str rangeOfString:@"["];
+        if (range.location>0)
+        {
+            if ([[str substringToIndex:range.location] isEqualToString:node.name])
+            {
+                NSArray *arr = [[str substringWithRange:NSMakeRange(range.location+1, str.length-1-range.location-1)] componentsSeparatedByString:@"="];
+                if (arr.count>1)
+                {
+                    return [node.attributes[arr.firstObject] isEqualToString:arr.lastObject];
+                }
+            }
+        }
+        return 0;
+    }
+}
+
 @implementation XMLNode
 
 - (XMLNode*)nodeForName:(NSString *)name
@@ -45,29 +68,6 @@
             }
         }
         return nil;
-    }
-}
-
-static bool is_node_str_match(XMLNode *node, NSString *str)
-{
-    if (![str hasSuffix:@"]"])
-    {
-        return [str isEqualToString:node.name];
-    }else
-    {
-        NSRange range = [str rangeOfString:@"["];
-        if (range.location>0)
-        {
-            if ([[str substringToIndex:range.location] isEqualToString:node.name])
-            {
-                NSArray *arr = [[str substringWithRange:NSMakeRange(range.location+1, str.length-1-range.location-1)] componentsSeparatedByString:@"="];
-                if (arr.count>1)
-                {
-                    return [node.attributes[arr.firstObject] isEqualToString:arr.lastObject];
-                }
-            }
-        }
-        return 0;
     }
 }
 
@@ -132,27 +132,7 @@ static bool is_node_str_match(XMLNode *node, NSString *str)
 
 @end
 
-
-@interface XMLParser()<NSXMLParserDelegate>
-{
-    NSXMLParser *_parser;
-    NSMutableString *_currentString;
-    NSCharacterSet *_trimCharacters;
-}
-@property (nonatomic) XMLNode *currentNode;
-@end
-
-@implementation XMLParser
-
-+ (XMLNode*)nodeWithString:(NSString *)string
-{
-    return [[[self alloc] initWithData:[string dataUsingEncoding:NSUTF8StringEncoding]] node];
-}
-
-- (instancetype)init
-{
-    return nil;
-}
+#pragma mark - XMLParser
 
 static NSString *str_from_node(XMLNode *node, int depth)
 {
@@ -194,9 +174,31 @@ static NSString *str_from_node(XMLNode *node, int depth)
     return string;
 }
 
+@interface XMLParser()<NSXMLParserDelegate>
+{
+    NSXMLParser *_parser;
+    NSMutableString *_currentString;
+    NSCharacterSet *_trimCharacters;
+    XMLNode *_rootNode;
+    XMLNode *_currentNode;
+}
+@end
+
+@implementation XMLParser
+
++ (XMLNode*)nodeWithString:(NSString *)string
+{
+    return [[[self alloc] initWithData:[string dataUsingEncoding:NSUTF8StringEncoding]] node];
+}
+
 + (NSString*)stringWithNode:(XMLNode*)node
 {
     return str_from_node(node, 0);
+}
+
+- (instancetype)init
+{
+    return nil;
 }
 
 - (void)dealloc
@@ -221,6 +223,7 @@ static NSString *str_from_node(XMLNode *node, int depth)
 - (XMLNode*)node
 {
     BOOL flag = [_parser parse];
+    _rootNode = nil;
     if (flag)
     {
         return _currentNode;
@@ -261,6 +264,9 @@ static NSString *str_from_node(XMLNode *node, int depth)
         
         _currentNode.childNodes = [_currentNode.childNodes arrayByAddingObject:node];
         node.parentNode = _currentNode;
+    }else
+    {
+        _rootNode = node;
     }
     
     _currentNode = node;
