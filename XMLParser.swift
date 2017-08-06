@@ -64,6 +64,8 @@ public final class XMLNode:NSObject {
     }
 }
 
+//MARK: internal
+
 fileprivate class XMLParse:NSObject {
     private let parser:XMLParser
     fileprivate let trimCharacters = CharacterSet.whitespacesAndNewlines.union(.controlCharacters)
@@ -79,8 +81,6 @@ fileprivate class XMLParse:NSObject {
         parser.delegate = nil
     }
 }
-
-//MARK: internal
 
 extension XMLNode{
     fileprivate func match(_ string:String)->Bool{
