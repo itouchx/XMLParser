@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print(node.node("block")?.string ?? "0")
                 print(node.node("block.value")?.string ?? "0")
                 print(node.node("block.value[name]")?.string ?? "0")
-                print(node.node("block.value[name=TIMES]")?.string ?? "0")
+                print(node.node("block.value[name=IF0]")?.string ?? "0")
             }
         }
         
