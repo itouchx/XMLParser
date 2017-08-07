@@ -1,14 +1,12 @@
-<xml version="1.0" encoding="utf-8" standalone="no">
-    <block type="controls_if">
-        <value name="IF0">
-            <block type="logic_boolean">
-                <field name="BOOL">TRUE</field>
-            </block>
-        </value>
-        <value name="VALUE">
-            <shadow type="math_number">
-                <field name="NUM">50</field>
-            </shadow>
-        </value>
-    </block>
-</xml>
+<animals>
+    <cats>
+        <cat color="lightgray" age="2">Tinna</cat>
+        <cat color="darkgray" height="15">Rose</cat>
+        <cat color="yellow" weight="2.4">Caesar</cat>
+    </cats>
+    <dogs>
+        <dog color="brown" age="4">Villy</dog>
+        <dog color="white" height="46">Spot</dog>
+        <dog color="yellow" weight="18">Betty</dog>
+    </dogs>
+</animals>

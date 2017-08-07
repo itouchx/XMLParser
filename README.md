@@ -2,20 +2,18 @@
 ## A lightweight but powful package to encode, decode and traverse XML
 1. Decode:
 XML string:
-<xml version="1.0" encoding="utf-8" standalone="no">
-<block type="controls_if">
-<value name="IF0">
-<block type="logic_boolean">
-<field name="BOOL">TRUE</field>
-</block>
-</value>
-<value name="VALUE">
-<shadow type="math_number">
-<field name="NUM">50</field>
-</shadow>
-</value>
-</block>
-</xml>
+<animals>
+<cats>
+<cat age="2" color="lightgray">Tinna</cat>
+<cat height="15" color="darkgray">Rose</cat>
+<cat weight="2.4" color="yellow">Caesar</cat>
+</cats>
+<dogs>
+<dog age="4" color="brown">Villy</dog>
+<dog height="46" color="white">Spot</dog>
+<dog weight="18" color="yellow">Betty</dog>
+</dogs>
+</animals>
 
     public final class XMLNode:NSObject {
         public var name = ""
@@ -38,9 +36,11 @@ XML string:
 3. traverse
 path pattern:
 (name([key(=value)?])?)*
-    print(node.node("block")?.string ?? "0")
-     print(node.node("block.value")?.string ?? "0")
-    print(node.node("block.value[name]")?.string ?? "0")
-    print(node.node("block.value[name=IF0]")?.string ?? "0")
+print(node.string)
+print(node.node("cats.cat")?.string ?? "0")
+print(node.node("cat[height]")?.string ?? "0")
+print(node.node("cats.cat[color=yellow]")?.string ?? "0")
     
-    <value name="IF0">...</value>
+    <cat age="2" color="lightgray">Tinna</cat>
+    <cat height="15" color="darkgray">Rose</cat>
+    <cat weight="2.4" color="yellow">Caesar</cat>

@@ -19,10 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let path = Bundle.main.path(forResource: "src", ofType: "xml"), let str = try? String.init(contentsOfFile: path) {
             if let node = XMLNode.node(str){
                 print(node.string)
-                print(node.node("block")?.string ?? "0")
-                print(node.node("block.value")?.string ?? "0")
-                print(node.node("block.value[name]")?.string ?? "0")
-                print(node.node("block.value[name=IF0]")?.string ?? "0")
+                print(node.node("cats.cat")?.string ?? "0")
+                print(node.node("cat[height]")?.string ?? "0")
+                print(node.node("cats.cat[color=yellow]")?.string ?? "0")
             }
         }
         
