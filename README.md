@@ -1,6 +1,6 @@
 # XMLNode
-## A lightweight but powful package to encode, decode and traverse XML
-0. API  
+### A lightweight but powful package to encode, decode and traverse XML
+#### 0. API  
     Refer to the comments
 ```swift
     public final class XMLNode:NSObject {
@@ -26,8 +26,8 @@
         public var root:XMLNode{get}
     }
 ```
-1. Build a node from XML:  
-    Take this XML as example:
+#### 1. Build a node from XML  
+    Take this XML as an example:
 ```xml
     <animals>
         <cats>
@@ -47,12 +47,12 @@
     let node = XMLNode.node(str)
 ```
 
-2. Turn a node to XML  
+#### 2. Turn a node to XML  
 ```swift
     //decode previous node
     print(node.string)
 ```
-   Here's the result:  
+    Here's the result:  
 ```xml
     <animals>
         <cats>
@@ -67,7 +67,7 @@
         </dogs>
     </animals>
 ```
-3. Traverse  
+#### 3. Traverse  
     Regex pattern: `|?(name(/other)*([key(=value(/other)*)?])?)+`  
     Instructions:  
     `|`: matches from current node  
