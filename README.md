@@ -1,7 +1,7 @@
 # XMLNode
 ### A lightweight but powful package to encode, decode and traverse XML
 #### 0. API  
-    Refer to the comments
+    Refer to the comments:
 ```swift
     public final class XMLNode:NSObject {
         public var name = ""
@@ -13,14 +13,15 @@
         public static func node(_ string:String)->XMLNode?{}
         //turn a node to XML
         public var string: String{get}
-        /*depth first traverse
-          Regex pattern: `|?(name(/other)*([key(=value(/other)*)?])?)+`
-          Instructions:
-          |: matches from current node
-          /: or
-          name: tag name
-          key: keys in attributes
-          value: values in attributes
+        /*
+            depth first traverse
+            Regex pattern: `|?(name(/other)*([key(=value(/other)*)?])?)+`
+            Instructions:
+            |: matches from current node
+            /: or
+            name: tag name
+            key: keys in attributes
+            value: values in attributes
         */
         public subscript(path: String) -> XMLNode? {}
         public var root:XMLNode{get}
