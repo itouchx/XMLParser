@@ -1,7 +1,33 @@
 # XMLNode
 ## A lightweight but powful package to encode, decode and traverse XML
-1. Decode:
-XML string:
+0. API  
+    Refer to the comments
+```swift
+    public final class XMLNode:NSObject {
+        public var name = ""
+        public var attributes = [String:String]()
+        public var value = ""
+        public var children = [XMLNode]()
+        public weak var parent:XMLNode?
+        //build a node from XML
+        public static func node(_ string:String)->XMLNode?{}
+        //turn a node to XML
+        public var string: String{get}
+        /*depth first traverse
+          Regex pattern: `|?(name(/other)*([key(=value(/other)*)?])?)+`
+          Instructions:
+          |: matches from current node
+          /: or
+          name: tag name
+          key: keys in attributes
+          value: values in attributes
+        */
+        public subscript(path: String) -> XMLNode? {}
+        public var root:XMLNode{get}
+    }
+```
+1. Build a node from XML:  
+    Take this XML as example:
 ```xml
     <animals>
         <cats>
@@ -17,26 +43,16 @@ XML string:
     </animals>
 ```
 ```swift
-    public final class XMLNode:NSObject {
-        public var name = ""
-        public var attributes = [String:String]()
-        public var value = ""
-        public var children = [XMLNode]()
-        public weak var parent:XMLNode?
-        //decode
-        public static func node(_ string:String)->XMLNode?{}
-        //encode
-        public var string: String{get}
-        //depth first traverse
-        public subscript(path: String) -> XMLNode? {}
-        public var root:XMLNode{get}
-    }
-    
+    //We buile a node from the XML and use it later
     let node = XMLNode.node(str)
 ```
 
-2. decode
+2. Turn a node to XML  
+```swift
+    //decode previous node
     print(node.string)
+```
+   Here's the result:  
 ```xml
     <animals>
         <cats>
@@ -51,16 +67,26 @@ XML string:
         </dogs>
     </animals>
 ```
-3. traverse
-    path pattern:
-    `(name([key(=value)?])?)*`
+3. Traverse  
+    Regex pattern: `|?(name(/other)*([key(=value(/other)*)?])?)+`  
+    Instructions:  
+    `|`: matches from current node  
+    `/`: or  
+    `name`: tag name  
+    `key`: keys in attributes  
+    `value`: values in attributes  
 ```swift
-    print(node["|animals.cats.cat"]?.string ?? "0")
-    print(node["cat/dog[height]"]?.string ?? "0")
-    print(node["cats/dogs.cat/dog[color=white/brown]"]?.string ?? "0")
-```
+    print(node["cats.cat"]?.string ?? "nil")
+    print(node["|cats.cat"]?.string ?? "nil")
+    print(node["|animals.cats.cat"]?.string ?? "nil")
+    print(node["cat/dog[height]"]?.string ?? "nil")
+    print(node["cats/dogs.cat/dog[color=white/brown]"]?.string ?? "nil")
+````
+    Here's the result: 
 ```xml
     <cat age="2" color="lightgray">Tinna</cat>
+    nil
+    <cat age="2" color="lightgray">Tinna</cat>
     <cat height="15" color="darkgray">Rose</cat>
-    <dog color="white" height="46">Spot</dog>
+    <dog height="46" color="white">Spot</dog>
 ```
