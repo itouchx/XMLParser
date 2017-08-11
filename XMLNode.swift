@@ -21,9 +21,30 @@ public final class XMLNode:NSObject {
     }
     //encode
     public var string: String{return string(0)}
+    //convenience
+    public var root:XMLNode{
+        var node = self
+        while let p = node.parent {node = p}
+        return node
+    }
     //depth first traverse
-    public func node(_ path:String)->XMLNode?{
-        let comps = path.split(separator: ".").map{String($0)}
+    public subscript(path: String) -> XMLNode? {
+        let top = path.hasPrefix("|")
+        let subs = path[path.index(path.startIndex, offsetBy: top ? 1 : 0)...].split(separator: ".").map{String($0)}
+        let comps = subs.map{str->MatchType in
+            var t = MatchType(names: [String](), key:"", values:[String]())
+            let strs = str.split(separator: "[").map{String($0)}
+            t.names = strs[0].split(separator: "/").map{String($0)}
+            if strs.count > 1, let last = strs.last{
+                let subsubs = last.replacingOccurrences(of: "]", with: "").split(separator: "=").map{String($0)}
+                t.key = subsubs[0]
+                if subsubs.count > 1, let l = subsubs.last{
+                    t.values = l.split(separator: "/").map{String($0)}
+                }
+            }
+            return t
+        }
+        guard comps.count > 0 else {return nil}
         var depth = 0
         var hit = true
         var node = self
@@ -45,12 +66,13 @@ public final class XMLNode:NSObject {
                     hit = false    //flag to brother
                 }
             }else{  //continue to the match brother after a fail
-                if depth == 0{  //match children from 1st component
+                if depth == 0{  //match children with 1st component
+                    if top {return nil}
                     var res:XMLNode?
-                    let _ = node.children.first{e -> Bool in res = e.node(path); return res != nil}
+                    let _ = node.children.first{e -> Bool in res = e[path]; return res != nil}
                     return res
                 }else{
-                    guard let p = node.parent, let i = p.children.index(of: node) else{return nil}
+                    guard node != self, let p = node.parent, let i = p.children.index(of: node) else{return nil}
                     if i == p.children.count - 1{   //the last brother fails
                         node = p    //back to the parent
                         depth -= 1
@@ -62,6 +84,8 @@ public final class XMLNode:NSObject {
             }
         }
     }
+    //optional
+    public override var debugDescription: String{return string}
 }
 
 //MARK: internal
@@ -83,20 +107,17 @@ fileprivate class XMLParse:NSObject {
 }
 
 extension XMLNode{
-    fileprivate func match(_ string:String)->Bool{
-        if !string.hasSuffix("]") {
-            return name == string
-        }else{
-            if let r1 = string.range(of: "["), string[..<r1.lowerBound] == name{
-                if let r2 = string.range(of: "="){
-                    return attributes[String(string[r1.upperBound..<r2.lowerBound])] == String(string[r2.upperBound..<string.index(before: string.endIndex)])
-                }else{
-                    return attributes[String(string[r1.upperBound..<string.index(before: string.endIndex)])] != nil
-                }
-            }else{
-                return false
-            }
-        }
+    fileprivate typealias MatchType = (names:[String], key:String, values:[String])
+    fileprivate func match(_ tuple:MatchType)->Bool{
+        if tuple.names.contains(name) {
+            if !tuple.key.isEmpty{
+                if let val = attributes[tuple.key]{
+                    if !tuple.values.isEmpty{
+                        return tuple.values.contains(val)
+                    }else{return true}
+                }else{return false}
+            }else{return true}
+        }else {return false}
     }
     
     fileprivate func string(_ depth:Int)->String{

@@ -15,13 +15,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
         if let path = Bundle.main.path(forResource: "src", ofType: "xml"), let str = try? String.init(contentsOfFile: path) {
             if let node = XMLNode.node(str){
-                print(node.string)
-                print(node.node("cats.cat")?.string ?? "0")
-                print(node.node("cat[height]")?.string ?? "0")
-                print(node.node("cats.cat[color=yellow]")?.string ?? "0")
+//                print(node["cats.cat"]?.string ?? "0")
+//                print(node["cat[height]"]?.string ?? "0")
+                print(node["cats/dogs.cat/dog[color=white/brown]"]?.string ?? "0")
             }
         }
         
