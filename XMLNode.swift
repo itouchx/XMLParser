@@ -85,7 +85,7 @@ public final class XMLNode:NSObject {
         }
     }
     //optional
-    public override var debugDescription: String{return string}
+    public override var description: String{return string}
 }
 
 //MARK: internal
