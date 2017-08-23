@@ -28,6 +28,11 @@ public final class XMLNode:NSObject {
         return node
     }
     //depth first traverse
+    public func forEach(_ body: (XMLNode)throws -> Void){
+        try? body(self)
+        children.forEach{$0.forEach(body)}
+    }
+    //depth first search
     public subscript(path: String) -> XMLNode? {
         let top = path.hasPrefix("|")
         let subs = path[path.index(path.startIndex, offsetBy: top ? 1 : 0)...].split(separator: ".").map{String($0)}
