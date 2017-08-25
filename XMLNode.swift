@@ -91,6 +91,13 @@ public final class XMLNode:NSObject {
     }
     //optional
     public override var description: String{return string}
+    public static func ==(lhs: XMLNode, rhs: XMLNode) -> Bool{
+        if lhs === rhs{
+            return true
+        }else{
+            return lhs.name == rhs.name && lhs.value == rhs.value && lhs.attributes == rhs.attributes
+        }
+    }
 }
 
 //MARK: internal
